@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silly Story Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #4a5568;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            color: #4a5568;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #cbd5e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .generate-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .story-container {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #f6ad55;
+            animation: storyAppear 0.6s ease-out;
+        }
+
+        @keyframes storyAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .story-text {
+            font-size: 1.3em;
+            line-height: 1.6;
+            color: #2d3748;
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .placeholder-text {
+            color: #a0aec0;
+            font-style: italic;
+            font-size: 1.1em;
+        }
+
+        .fun-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            font-size: 2em;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9em;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .input-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .story-text {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎭 Silly Story Generator 📚</h1>
+        <p class="subtitle">Create hilariously random stories with your custom words!</p>
+        
+        <div class="fun-icons">
+            <span>🤪</span>
+            <span>🎪</span>
+            <span>🎨</span>
+            <span>🚀</span>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <div>
+                    <label for="customName">Enter a name:</label>
+                    <input type="text" id="customName" placeholder="e.g., Bob">
+                </div>
+                <div>
+                    <label for="adjective">Enter an adjective:</label>
+                    <input type="text" id="adjective" placeholder="e.g., silly">
+                </div>
+                <div>
+                    <label for="verb">Enter a verb:</label>
+                    <input type="text" id="verb" placeholder="e.g., dance">
+                </div>
+                <div>
+                    <label for="noun">Enter a noun:</label>
+                    <input type="text" id="noun" placeholder="e.g., banana">
+                </div>
+                <div>
+                    <label for="place">Enter a place:</label>
+                    <input type="text" id="place" placeholder="e.g., the moon">
+                </div>
+                <div>
+                    <label for="animal">Enter an animal:</label>
+                    <input type="text" id="animal" placeholder="e.g., penguin">
+                </div>
+            </div>
+            
+            <div class="tooltip">
+                <button class="generate-btn" onclick="generateStory()">Generate Silly Story!</button>
+                <span class="tooltiptext">Click to create your magical story!</span>
+            </div>
+        </div>
+
+        <div class="story-container">
+            <div class="story-text">
+                <span class="placeholder-text">Your silly story will appear here! Fill in the words above and click the button to begin the magic! ✨</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Story templates with placeholders
+        const storyTemplates = [
+            "Once upon a time, there was a [adjective] person named [customName]. They loved to [verb] with their pet [animal]. One day, they found a magical [noun] in [place]. When they touched it, something incredible happened - they started glowing like a disco ball! From that day forward, [customName] became the most [adjective] superhero in all of [place], saving the world one [verb] at a time!",
+            
+            "In the land of [place], lived a [adjective] [animal] named [customName]. This wasn't any ordinary [animal] - they could [verb] better than anyone! One morning, [customName] discovered a mysterious [noun] that granted wishes. Their first wish? To [verb] across the entire [place] while juggling rainbow-colored [noun]s! The sight was so [adjective] that even the clouds started laughing!",
+            
+            "Professor [customName] was a [adjective] scientist who specialized in [animal] behavior. Their latest invention was a [noun] that could make any [animal] [verb] in perfect harmony. When tested in [place], something went wonderfully wrong! All the [animal]s started a [adjective] dance party that lasted for three days straight, turning [place] into the most fun place on Earth!",
+            
+            "[customName] woke up one [adjective] morning to find their house had been replaced by a giant [noun]! Inside, they met a talking [animal] who explained that [place] had been transformed into a magical kingdom where everyone must [verb] to communicate. [customName] spent the most [adjective] day of their life learning this new way of life, eventually becoming the royal [verb]-er of [place]!",
+            
+            "The [adjective] adventures of Captain [customName] began when they accidentally swapped bodies with a [animal] while visiting [place]. Now they had to [verb] their way through daily life while figuring out how to reverse the magic [noun] that caused this mess. The funniest part? The [animal] was much better at being human than [customName] was at being a [animal]!"
+        ];
+
+        // Arrays of random words for fallback
+        const randomWords = {
+            names: ["Ziggy", "Bubbles", "Pickle", "Waffles", "Noodle", "Sprinkles", "Giggles", "Muffin"],
+            adjectives: ["sparkly", "wobbly", "gigantic", "tiny", "bouncy", "fuzzy", "slippery", "magical"],
+            verbs: ["wiggle", "bounce", "spin", "hop", "zoom", "giggle", "dance", "fly"],
+            nouns: ["rubber duck", "magic wand", "flying carpet", "crystal ball", "rainbow", "unicorn horn", "treasure chest", "disco ball"],
+            places: ["the candy kingdom", "outer space", "a secret cave", "the bottom of the ocean", "a cloud castle", "the jungle", "a magical forest", "the North Pole"],
+            animals: ["purple elephant", "dancing penguin", "flying pig", "invisible cat", "singing whale", "disco chicken", "ninja turtle", "rainbow unicorn"]
+        };
+
+        function getRandomElement(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        function generateStory() {
+            // Get user inputs
+            let customName = document.getElementById('customName').value.trim();
+            let adjective = document.getElementById('adjective').value.trim();
+            let verb = document.getElementById('verb').value.trim();
+            let noun = document.getElementById('noun').value.trim();
+            let place = document.getElementById('place').value.trim();
+            let animal = document.getElementById('animal').value.trim();
+
+            // Use random words if inputs are empty
+            if (!customName) customName = getRandomElement(randomWords.names);
+            if (!adjective) adjective = getRandomElement(randomWords.adjectives);
+            if (!verb) verb = getRandomElement(randomWords.verbs);
+            if (!noun) noun = getRandomElement(randomWords.nouns);
+            if (!place) place = getRandomElement(randomWords.places);
+            if (!animal) animal = getRandomElement(randomWords.animals);
+
+            // Select random story template
+            const template = getRandomElement(storyTemplates);
+
+            // Replace placeholders with words
+            let story = template
+                .replace(/\[customName\]/g, customName)
+                .replace(/\[adjective\]/g, adjective)
+                .replace(/\[verb\]/g, verb)
+                .replace(/\[noun\]/g, noun)
+                .replace(/\[place\]/g, place)
+                .replace(/\[animal\]/g, animal);
+
+            // Display the story with animation
+            const storyContainer = document.querySelector('.story-text');
+            storyContainer.style.opacity = '0';
+            
+            setTimeout(() => {
+                storyContainer.innerHTML = story;
+                storyContainer.style.opacity = '1';
+                storyContainer.parentElement.style.animation = 'storyAppear 0.6s ease-out';
+            }, 200);
+
+            // Add some fun effects
+            addConfetti();
+        }
+
+        function addConfetti() {
+            // Simple confetti effect
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dda0dd'];
+            
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    createConfettiPiece(getRandomElement(colors));
+                }, i * 50);
+            }
+        }
+
+        function createConfettiPiece(color) {
+            const confetti = document.createElement('div');
+            confetti.style.position = 'fixed';
+            confetti.style.width = '10px';
+            confetti.style.height = '10px';
+            confetti.style.backgroundColor = color;
+            confetti.style.left = Math.random() * window.innerWidth + 'px';
+            confetti.style.top = '-10px';
+            confetti.style.opacity = '0.8';
+            confetti.style.borderRadius = '50%';
+            confetti.style.pointerEvents = 'none';
+            confetti.style.zIndex = '9999';
+            
+            document.body.appendChild(confetti);
+            
+            let posY = -10;
+            const fallSpeed = Math.random() * 3 + 2;
+            const sway = Math.random() * 2 - 1;
+            
+            const fall = setInterval(() => {
+                posY += fallSpeed;
+                confetti.style.top = posY + 'px';
+                confetti.style.left = (parseFloat(confetti.style.left) + sway) + 'px';
+                
+                if (posY > window.innerHeight) {
+                    clearInterval(fall);
+                    document.body.removeChild(confetti);
+                }
+            }, 20);
+        }
+
+        // Generate a story on page load for demo
+        window.addEventListener('load', () => {
+            setTimeout(generateStory, 1000);
+        });
+
+        // Allow Enter key to generate story
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                generateStory();
+            }
+        });
+    </script>
+</body>
+</html>
